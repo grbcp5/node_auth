@@ -11,7 +11,7 @@
 const CLIENT_ID = "848234276765-2f7qr400h17q2mboi9nt56pj5fge2m4e.apps.googleusercontent.com";
 
 const { OAuth2Client } = require( 'google-auth-library' );
-const client = new OAuth2Client( CLIENT_ID );
+const googleClient = new OAuth2Client( CLIENT_ID );
 
 
 module.exports = function () {
@@ -24,33 +24,35 @@ module.exports = function () {
       return;
     }
     
-    var tokenPayload;
-    
     /* Parse token */
+    var tokenPayload;
     try {
       tokenPayload = parseJwt( bearerToken );
-    } catch (error) {
-      next({status: 401, description: "Unable to parse jwt."})
+    } catch ( error ) {
+      next( { status: 401, description: "Unable to parse jwt." } );
       return;
     }
     
+    /* Check token iss */
     if ( !tokenPayload.iss ) {
-      next( { status: 401, errorCode: -1, description: "Auth jwt does not contain an iss." } )
+      next( { status: 401, description: "Auth jwt does not contain an iss." } );
       return;
     }
     
+    /* Check if token is google access token */
     if ( tokenPayload.iss.toLowerCase().includes( "google" ) ) {
-      
+  
+      /* Have google verify token */
       await verifyGoogleToken( bearerToken )
         .then( function ( payload ) {
           res.locals.auth = payload;
           next();
         } )
         .catch( function ( error ) {
-          next({ status: 401, description: error.message.split(":")[0].trim()});
+          next( { status: 401, description: error.message.split( ":" )[ 0 ].trim() } );
         } );
-    } else {
-      next( { status: 401, errorCode: -2, description: "ISS not recognized." } );
+    } else { /* iss != google */
+      next( { status: 401, description: "ISS not recognized." } );
     }
   }
 };
@@ -65,7 +67,7 @@ function parseJwt( token ) {
 
 async function verifyGoogleToken( token ) {
   
-  const ticket = await client.verifyIdToken( {
+  const ticket = await googleClient.verifyIdToken( {
     idToken: token,
     audience: CLIENT_ID,
   } );
