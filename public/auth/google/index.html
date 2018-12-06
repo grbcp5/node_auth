@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Google Auth</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="/javascripts/main.js"></script>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <meta name="google-signin-client_id" content="848234276765-2f7qr400h17q2mboi9nt56pj5fge2m4e.apps.googleusercontent.com">
+
+</head>
+<body>
+
+    <div class="g-signin2" data-onsuccess="onSignIn"></div>
+
+    <h3>Token</h3>
+    <p id="token"></p>
+
+    <h3>Name</h3>
+    <p id="name"></p>
+
+    <h3>Email</h3>
+    <p id="email"></p>
+
+    <h3>Exp</h3>
+    <p id="exp"></p>
+</body>
+</html>
