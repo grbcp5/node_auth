@@ -18,9 +18,15 @@ module.exports = function () {
   return async function ( req, res, next ) {
     
     /* Get token */
-    let bearerToken = req.get( 'Authorization' ).split( "Bearer " )[ 1 ];
+    let authHeader = req.get( 'Authorization' );
+    if ( !authHeader ) {
+      next( { status: 401, description: "No auth token provided" } );
+      return;
+    }
+    
+    let bearerToken = authHeader.split( "Bearer " )[ 1 ];
     if ( !bearerToken ) {
-      next( { status: 401, description: "Unauthorized" } );
+      next( { status: 401, description: "No bearer token provided" } );
       return;
     }
     
